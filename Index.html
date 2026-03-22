@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PingSwing — Dominate the Table</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --black: #0a0a0a;
+  --dark: #111214;
+  --card: #161819;
+  --border: #2a2d30;
+  --neon: #00e5ff;
+  --orange: #ff5c00;
+  --white: #f0f0f0;
+  --muted: #888;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  overflow-x: hidden;
+}
+
+/* CUSTOM CURSOR */
+body { cursor: none; }
+#cursor {
+  width: 12px; height: 12px;
+  background: var(--neon);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s;
+  mix-blend-mode: difference;
+}
+#cursor.big { width: 40px; height: 40px; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 4rem;
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: var(--white);
+  text-decoration: none;
+}
+.logo span { color: var(--neon); }
+nav ul {
+  list-style: none;
+  display: flex; gap: 2.5rem;
+}
+nav ul a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+nav ul a:hover { color: var(--neon); }
+.nav-cta {
+  background: var(--neon);
+  color: var(--black) !important;
+  padding: 0.5rem 1.4rem;
+  border-radius: 2px;
+}
+.nav-cta:hover { background: white; color: var(--black) !important; }
+
+/* HERO */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 4rem;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 70% 50%, rgba(0,229,255,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,92,0,0.06) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 700px;
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+  padding: 0.3rem 0.9rem;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 10vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: 2px;
+  animation: fadeUp 0.7s ease 0.1s both;
+}
+.hero-title .accent { color: var(--neon); }
+.hero-title .stroke {
+  -webkit-text-stroke: 2px var(--white);
+  color: transparent;
+}
+.hero-sub {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.7;
+  animation: fadeUp 0.7s ease 0.2s both;
+}
+.hero-actions {
+  margin-top: 2.5rem;
+  display: flex; gap: 1rem; align-items: center;
+  animation: fadeUp 0.7s ease 0.3s both;
+}
+.btn-primary {
+  background: var(--neon);
+  color: var(--black);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 1rem 2.2rem;
+  border: none;
+  border-radius: 2px;
+  cursor: none;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover { background: white; transform: translateY(-2px); }
+.btn-ghost {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: color 0.2s;
+}
+.btn-ghost:hover { color: var(--neon); }
+.hero-ping {
+  position: absolute;
+  right: 4rem; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22rem;
+  color: rgba(255,255,255,0.02);
+  letter-spacing: -10px;
+  user-select: none;
+  pointer-events: none;
+  animation: fadeUp 1s ease 0.5s both;
+}
+.hero-stats {
+  position: absolute;
+  bottom: 3rem; left: 4rem;
+  display: flex; gap: 4rem;
+  animation: fadeUp 0.7s ease 0.4s both;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--neon);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
+/* MARQUEE */
+.marquee-wrap {
+  background: var(--neon);
+  padding: 0.8rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+.marquee-inner span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  color: var(--black);
+  margin: 0 2rem;
+}
+.marquee-inner span.dot { color: rgba(0,0,0,0.3); margin: 0 0.5rem; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* SHOP */
+#shop {
+  padding: 8rem 4rem;
+}
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 0.8rem;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+.section-desc {
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 4rem;
+}
+
+/* FILTER */
+.filter-bar {
+  display: flex; gap: 0.8rem; margin-bottom: 3rem; flex-wrap: wrap;
+}
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.5rem 1.2rem;
+  border-radius: 2px;
+  cursor: none;
+  transition: all 0.2s;
+}
+.filter-btn.active, .filter-btn:hover {
+  background: var(--neon);
+  border-color: var(--neon);
+  color: var(--black);
+}
+
+/* PRODUCT GRID */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.3s, border-color 0.3s;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--neon);
+}
+.product-card.featured {
+  grid-column: span 2;
+}
+.product-badge {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 2px;
+  z-index: 2;
+}
+.badge-new { background: var(--neon); color: var(--black); }
+.badge-hot { background: var(--orange); color: white; }
+.badge-sale { background: #ff2d55; color: white; }
+.product-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.product-img::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,229,255,0.08), transparent 70%);
+}
+.racket-svg {
+  width: 140px; height: 140px;
+  transition: transform 0.4s;
+}
+.product-card:hover .racket-svg { transform: rotate(-5deg) scale(1.05); }
+.product-body { padding: 1.5rem; }
+.product-cat {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 0.4rem;
+}
+.product-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.product-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+.product-specs {
+  display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.spec {
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 0.3rem;
+}
+.spec::before {
+  content: '▸';
+  color: var(--neon);
+  font-size: 0.6rem;
+}
+.product-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 1.2rem;
+}
+.product-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+.product-price .currency { font-size: 1.2rem; color: var(--muted); }
+.product-price .old {
+  font-size: 1rem;
+  color: var(--muted);
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+}
+.add-btn {
+  background: var(--neon);
+  color: var(--black);
+  border: none;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.7rem 1.4rem;
+  border-radius: 2px;
+  cursor: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.add-btn:hover { background: white; transform: scale(1.05); }
+
+/* FEATURES */
+#features {
+  padding: 6rem 4rem;
+  background: var(--dark);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+}
+.feature-card {
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+.feature-card:hover { border-color: var(--neon); }
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.feature-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.feature-text {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* CART SIDEBAR */
+#cart-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  display: none;
+  backdrop-filter: blur(4px);
+}
+#cart-overlay.open { display: block; }
+#cart-sidebar {
+  position: fixed;
+  top: 0; right: -450px;
+  width: 420px; height: 100vh;
+  background: var(--dark);
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex; flex-direction: column;
+  padding: 2rem;
+}
+#cart-sidebar.open { right: 0; }
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.cart-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 2px;
+}
+.cart-close {
+  background: none; border: none;
+  color: var(--muted);
+  font-size: 1.5rem;
+  cursor: none;
+  transition: color 0.2s;
+}
+.cart-close:hover { color: var(--white); }
+.cart-items { flex: 1; overflow-y: auto; }
+.cart-empty {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 4rem;
+}
+.cart-empty-icon { font-size: 4rem; margin-bottom: 1rem; }
+.cart-item {
+  display: flex; gap: 1rem; align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-img {
+  width: 60px; height: 60px;
+  background: var(--card);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+}
+.cart-item-info { flex: 1; }
+.cart-item-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+.cart-item-price { color: var(--neon); font-weight: 600; font-size: 0.9rem; }
+.cart-item-remove {
+  background: none; border: none;
+  color: var(--muted); font-size: 1.2rem;
+  cursor: none; transition: color 0.2s;
+}
+.cart-item-remove:hover { color: #ff2d55; }
+.cart-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+}
+.cart-total {
+  display: flex; justify-content: space-between;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+}
+.cart-total span:last-child { color: var(--neon); }
+.checkout-btn {
+  width: 100%;
+  background: var(--neon);
+  color: var(--black);
+  border: none;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 1.1rem;
+  border-radius: 2px;
+  cursor: none;
+  transition: background 0.2s;
+}
+.checkout-btn:hover { background: white; }
+
+/* CART ICON */
+.cart-trigger {
+  position: relative;
+  background: none; border: none;
+  color: var(--white);
+  font-size: 1.3rem;
+  cursor: none;
+  transition: color 0.2s;
+}
+.cart-trigger:hover { color: var(--neon); }
+.cart-count {
+  position: absolute;
+  top: -6px; right: -8px;
+  background: var(--neon);
+  color: var(--black);
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.cart-count.show { display: flex; }
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--neon);
+  color: var(--black);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.8rem 2rem;
+  border-radius: 2px;
+  z-index: 300;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* FOOTER */
+footer {
+  padding: 4rem;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3rem;
+}
+.footer-brand .logo { display: block; margin-bottom: 1rem; }
+.footer-brand p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; }
+.footer-col h4 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+.footer-col a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--neon); }
+.footer-bottom {
+  padding: 2rem 4rem;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-bottom p { color: var(--muted); font-size: 0.8rem; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  nav ul { display: none; }
+  #hero { padding: 0 1.5rem; }
+  .hero-ping { display: none; }
+  .hero-stats { left: 1.5rem; gap: 2rem; }
+  #shop, #features { padding: 5rem 1.5rem; }
+  .product-card.featured { grid-column: span 1; }
+  footer { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
+  .footer-bottom { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+  #cart-sidebar { width: 100%; right: -100%; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="toast">Added to cart!</div>
+
+<!-- CART -->
+
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-sidebar">
+  <div class="cart-header">
+    <div class="cart-title">Your Bag</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🏓</div>
+      <p>Your bag is empty.<br>Time to swing.</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cart-total">£0.00</span>
+    </div>
+    <button class="checkout-btn">Checkout →</button>
+  </div>
+</div>
+
+<!-- NAV -->
+
+<nav>
+  <a href="#" class="logo">PING<span>SWING</span></a>
+  <ul>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#features">Why Us</a></li>
+    <li><a href="#shop" class="nav-cta">Buy Now</a></li>
+  </ul>
+  <button class="cart-trigger" onclick="openCart()">
+    🛒
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Professional Table Tennis</div>
+    <h1 class="hero-title">
+      PLAY<br>
+      <span class="accent">HARDER.</span><br>
+      <span class="stroke">WIN MORE.</span>
+    </h1>
+    <p class="hero-sub">Premium table tennis rackets engineered for players who refuse to lose. Every swing. Every point. Every game.</p>
+    <div class="hero-actions">
+      <a href="#shop" class="btn-primary">Shop Rackets</a>
+      <a href="#features" class="btn-ghost">Why PingSwing ▸</a>
+    </div>
+  </div>
+  <div class="hero-ping">PING</div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">500+</div>
+      <div class="stat-label">Players</div>
+    </div>
+    <div>
+      <div class="stat-num">5★</div>
+      <div class="stat-label">Reviews</div>
+    </div>
+    <div>
+      <div class="stat-num">UK</div>
+      <div class="stat-label">Shipping</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span>FREE UK DELIVERY</span><span class="dot">●</span>
+    <span>PREMIUM RUBBER</span><span class="dot">●</span>
+    <span>PRO GRADE BLADE</span><span class="dot">●</span>
+    <span>FAST DISPATCH</span><span class="dot">●</span>
+    <span>5 STAR RATED</span><span class="dot">●</span>
+    <span>FREE UK DELIVERY</span><span class="dot">●</span>
+    <span>PREMIUM RUBBER</span><span class="dot">●</span>
+    <span>PRO GRADE BLADE</span><span class="dot">●</span>
+    <span>FAST DISPATCH</span><span class="dot">●</span>
+    <span>5 STAR RATED</span><span class="dot">●</span>
+    <span>FREE UK DELIVERY</span><span class="dot">●</span>
+    <span>PREMIUM RUBBER</span><span class="dot">●</span>
+    <span>PRO GRADE BLADE</span><span class="dot">●</span>
+    <span>FAST DISPATCH</span><span class="dot">●</span>
+    <span>5 STAR RATED</span><span class="dot">●</span>
+  </div>
+</div>
+
+<!-- SHOP -->
+
+<section id="shop">
+  <div class="section-label">Our Rackets</div>
+  <h2 class="section-title">Find Your Weapon</h2>
+  <p class="section-desc">From beginners finding their swing to competitive players chasing every point — we've got the racket for you.</p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('beginner', this)">Beginner</button>
+    <button class="filter-btn" onclick="filterProducts('intermediate', this)">Intermediate</button>
+    <button class="filter-btn" onclick="filterProducts('pro', this)">Pro</button>
+  </div>
+
+  <div class="product-grid" id="product-grid"></div>
+</section>
+
+<!-- FEATURES -->
+
+<section id="features">
+  <div class="section-label">Why PingSwing</div>
+  <h2 class="section-title">Built Different</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Pro Grade Materials</div>
+      <p class="feature-text">Carbon fibre blades and high-grip rubber give you tournament-level control at an accessible price.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">Precision Engineering</div>
+      <p class="feature-text">Every racket is balanced for optimal weight distribution so you can focus on the game, not the gear.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-title">Fast UK Delivery</div>
+      <p class="feature-text">Order before 2pm and get your racket the next working day. Free shipping on all orders over £30.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Player Approved</div>
+      <p class="feature-text">Trusted by club players and coaches across the UK. Real feedback, real performance, real results.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-brand">
+    <a href="#" class="logo">PING<span>SWING</span></a>
+    <p>Premium table tennis rackets for players who take the game seriously. UK based, player obsessed.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <a href="#shop">All Rackets</a>
+    <a href="#shop">Beginner</a>
+    <a href="#shop">Intermediate</a>
+    <a href="#shop">Pro</a>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <a href="#">Shipping & Returns</a>
+    <a href="#">Size Guide</a>
+    <a href="#">Contact Us</a>
+    <a href="#">FAQ</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2026 PingSwing. All rights reserved.</p>
+  <p>Made with ⚡ in the UK</p>
+</div>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // PRODUCTS DATA
+  const products = [
+    {
+      id: 1, name: 'SWIFT PRO', cat: 'beginner', badge: 'new', badgeClass: 'badge-new',
+      price: 24.99, emoji: '🏓',
+      desc: 'The perfect entry racket. Great spin, solid control, ideal for learning the game.',
+      specs: ['5-ply blade', 'Medium rubber', '170g weight']
+    },
+    {
+      id: 2, name: 'STRIKE X', cat: 'intermediate', badge: 'hot', badgeClass: 'badge-hot',
+      price: 39.99, oldPrice: 49.99, emoji: '🏓',
+      desc: 'Step up your game with enhanced speed and spin. The favourite among club players.',
+      specs: ['7-ply blade', 'High-grip rubber', '175g weight'], featured: true
+    },
+    {
+      id: 3, name: 'APEX CARBON', cat: 'pro', badge: null,
+      price: 59.99, emoji: '🏓',
+      desc: 'Carbon fibre construction for maximum speed and tournament-grade performance.',
+      specs: ['Carbon blade', 'Pro rubber', '168g weight']
+    },
+    {
+      id: 4, name: 'CONTROL ELITE', cat: 'intermediate', badge: 'sale', badgeClass: 'badge-sale',
+      price: 34.99, oldPrice: 44.99, emoji: '🏓',
+      desc: 'Dominate with placement. Built for tactical players who win with precision.',
+      specs: ['6-ply blade', 'Control rubber', '172g weight']
+    },
+    {
+      id: 5, name: 'STARTER KIT', cat: 'beginner', badge: 'new', badgeClass: 'badge-new',
+      price: 19.99, emoji: '🏓',
+      desc: 'Everything a beginner needs. Lightweight, durable, and easy to learn with.',
+      specs: ['5-ply blade', 'Soft rubber', '165g weight']
+    },
+    {
+      id: 6, name: 'THUNDER MAX', cat: 'pro', badge: null,
+      price: 74.99, emoji: '🏓',
+      desc: 'Our flagship. Maximum speed, unmatched spin, built for serious competitors.',
+      specs: ['Carbon + fibre', 'Speed rubber', '171g weight'], featured: true
+    }
+  ];
+
+  let cart = [];
+  let activeFilter = 'all';
+
+  function renderProducts(filter) {
+    const grid = document.getElementById('product-grid');
+    const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card ${p.featured ? 'featured' : ''}" data-cat="${p.cat}">
+        ${p.badge ? `<span class="product-badge ${p.badgeClass}">${p.badge}</span>` : ''}
+        <div class="product-img">
+          <svg class="racket-svg" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="52" rx="34" ry="38" fill="#1a1a1a" stroke="#00e5ff" stroke-width="2"/>
+            <ellipse cx="50" cy="52" rx="28" ry="32" fill="#222" stroke="#333" stroke-width="1"/>
+            <line x1="22" y1="52" x2="78" y2="52" stroke="#00e5ff" stroke-width="0.5" opacity="0.4"/>
+            <line x1="50" y1="14" x2="50" y2="90" stroke="#00e5ff" stroke-width="0.5" opacity="0.4"/>
+            <line x1="28" y1="30" x2="72" y2="74" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+            <line x1="72" y1="30" x2="28" y2="74" stroke="#00e5ff" stroke-width="0.5" opacity="0.2"/>
+            <rect x="44" y="88" width="12" height="38" rx="4" fill="#ff5c00"/>
+            <rect x="46" y="86" width="8" height="8" rx="1" fill="#cc4800"/>
+          </svg>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">${p.cat}</div>
+          <div class="product-name">${p.name}</div>
+          <p class="product-desc">${p.desc}</p>
+          <div class="product-specs">
+            ${p.specs.map(s => `<span class="spec">${s}</span>`).join('')}
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              <span class="currency">£</span>${p.price.toFixed(2)}
+              ${p.oldPrice ? `<span class="old">£${p.oldPrice.toFixed(2)}</span>` : ''}
+            </div>
+            <button class="add-btn" onclick="addToCart(${p.id})">Add to Bag</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterProducts(cat, btn) {
+    activeFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(cat);
+  }
+
+  function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const existing = cart.find(i => i.id === id);
+    if (existing) existing.qty++;
+    else cart.push({ ...product, qty: 1 });
+    updateCart();
+    showToast(`${product.name} added!`);
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    updateCart();
+  }
+
+  function updateCart() {
+    const count = cart.reduce((a, i) => a + i.qty, 0);
+    const total = cart.reduce((a, i) => a + i.price * i.qty, 0);
+    const countEl = document.getElementById('cart-count');
+    countEl.textContent = count;
+    countEl.classList.toggle('show', count > 0);
+    document.getElementById('cart-total').textContent = `£${total.toFixed(2)}`;
+    const itemsEl = document.getElementById('cart-items');
+    if (cart.length === 0) {
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🏓</div><p>Your bag is empty.<br>Time to swing.</p></div>`;
+    } else {
+      itemsEl.innerHTML = cart.map(i => `
+        <div class="cart-item">
+          <div class="cart-item-img">🏓</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${i.name} × ${i.qty}</div>
+            <div class="cart-item-price">£${(i.price * i.qty).toFixed(2)}</div>
+          </div>
+          <button class="cart-item-remove" onclick="removeFromCart(${i.id})">✕</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  function openCart() {
+    document.getElementById('cart-sidebar').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+  }
+
+  function closeCart() {
+    document.getElementById('cart-sidebar').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // INIT
+  renderProducts('all');
+</script>
+
+</body>
+</html>
