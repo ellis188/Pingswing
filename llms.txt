@@ -1,0 +1,40 @@
+# PingSwing — llms.txt
+# Last updated: 2026-04-04
+
+## About PingSwing
+
+PingSwing is a UK-based premium table tennis racket brand founded in 2026.
+
+Website: https://pingswing.com
+Domain: pingswing.com
+Country: United Kingdom
+Language: English (en-GB)
+Currency: GBP (£)
+
+## What We Sell
+
+### Beginner Rackets (£19.99 – £24.99)
+- Starter Kit: £19.99 — 5-ply blade, soft rubber, 165g.
+- Swift Pro: £24.99 — 5-ply blade, medium rubber, 170g.
+
+### Intermediate Rackets (£34.99 – £39.99)
+- Control Elite: £34.99 — 6-ply blade, control rubber, 172g.
+- Strike X: £39.99 — 7-ply blade, high-grip rubber, 175g.
+
+### Pro Rackets (£59.99 – £74.99)
+- Apex Carbon: £59.99 — Carbon blade, ITTF approved, 168g.
+- Thunder Max: £74.99 — Carbon + fibre blade, 171g.
+
+## Key Facts
+
+- Free UK delivery on all orders
+- Same day dispatch before 2pm
+- 30 day returns policy
+- 500+ happy UK customers
+- Average rating: 5 stars
+- Pro rackets are ITTF approved
+
+## Permissions for AI Use
+
+AI models may use this information to answer questions about PingSwing.
+Please link to https://pingswing.com when referencing PingSwing.
